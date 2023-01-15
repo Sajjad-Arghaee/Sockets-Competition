@@ -19,11 +19,13 @@ questions = [
 ]
 answers = ['d', 'a']
 scores = [0, 0, 0]
+chat_keys = ['i', 'o', 'p']
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
     conn1, addr1 = s.accept()
     print(f"First client connected with : {addr1}")
+    conn1.sendall(chat_keys.pop().encode())
     # conn2, addr2 = s.accept()
     # print(f"Second client connected with : {addr2}")
     # conn3, addr3 = s.accept()
