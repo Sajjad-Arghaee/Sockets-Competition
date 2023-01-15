@@ -6,12 +6,14 @@ PORT = 54122
 END_CHAT = False
 
 
-def receive_handler(receiver_client: socket):
+def receive_handler(receiver_client: socket, host):
     global END_CHAT
     while True:
         stream = receiver_client.recv(1024).decode()
         if stream == 'exit()':
             print('chat ended')
+            host.sendall('end_chat'.encode())
+            receiver_client.sendall('exit()'.encode())
             END_CHAT = True
             quit(0)
         print(stream) if stream else None
@@ -26,7 +28,7 @@ def chat_handler():
         s1.connect((HOST, PORT))
         s1.sendall(f'im gonna connect to {receiver}')
         s2.connect((HOST, receiver))
-        thread = threading.Thread(target=receive_handler, args=(s2,))
+        thread = threading.Thread(target=receive_handler, args=(s2,s1))
         thread.start()
         while not END_CHAT:
             message = input(f'to client {receiver}>> ')
