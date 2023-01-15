@@ -1,8 +1,7 @@
-import socket
 import time
 from pynput import keyboard
 from pytimedinput import timedInput
-import threading
+from chat import *
 
 HOST = '127.0.0.1'
 PORT = 54122
@@ -11,6 +10,8 @@ state = False  # False is competition mode and True is chat mode
 
 
 def timer(num):
+    global answered
+    global state
     t = num
     while t > 0 and not state:
         minutes, secs = divmod(t, 60)
@@ -22,16 +23,6 @@ def timer(num):
         time.sleep(1)
         t -= 1
 
-
-def chat_handler():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s1, \
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
-        s1.bind((HOST, 13000))
-        s2.bind((HOST, 13001))
-        receiver = input('write down receiver port number >> ')
-        s1.connect((HOST, PORT))
-        s2.connect((HOST, receiver))
-
     def on_activate():
         print(f'{key} pressed')
         quit()
@@ -41,10 +32,12 @@ def chat_handler():
         quit()
 
     def key_handler():
+        global state
         with keyboard.GlobalHotKeys({key: on_activate, '<ctrl>+c': finish}) as listener:
             listener.join()
             state = True
             chat_handler()
+            quit()
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, 13000))
@@ -66,12 +59,12 @@ def chat_handler():
             t1.start()
             if state:
                 quit()
-            userText, timedOut = timedInput("type your answer >> ", timeout=5)
-            if timedOut:
+            user_text, timed_out = timedInput("type your answer >> ", timeout=5)
+            if timed_out:
                 answer = 'no answer'
             else:
                 answered = True
-                answer = userText
+                answer = user_text
                 print('your answer was submitted.')
                 print('please wait until timeout')
 
