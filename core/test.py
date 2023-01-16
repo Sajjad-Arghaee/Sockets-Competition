@@ -1,26 +1,8 @@
-from pynput import keyboard
+import socket
+import select
 
-
-def on_activate_a():
-    print('A pressed')
-
-
-def on_activate_b():
-    print('B pressed')
-
-
-def on_activate_c():
-    print('C pressed')
-
-
-def quit():
-    print('QUIT')
-    h.stop()
-
-
-with keyboard.GlobalHotKeys({
-    'a': on_activate_a,
-    'b': on_activate_b,
-    'c': on_activate_c,
-    '<ctrl>+c': quit}) as h:
-    h.join()
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as mysocket:
+    mysocket.setblocking(False)
+    ready = select.select([mysocket], [], [], 5)
+    if ready[0]:
+        data = mysocket.recv(1024)
