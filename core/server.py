@@ -33,19 +33,19 @@ def chat_listener(s1: socket, msg):
         print(msg)
 
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
-    s.listen()
-    conn1, addr1 = s.accept()
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+    server.bind((HOST, PORT))
+    server.listen()
+    conn1, addr1 = server.accept()
     print(f"First client connected with : {addr1}")
     conn1.sendall(chat_keys.pop().encode())
-    conn2, addr2 = s.accept()
+    conn2, addr2 = server.accept()
     print(f"First client connected with : {addr2}")
     conn2.sendall(chat_keys.pop().encode())
     with conn1, conn2:
         index = 0
         while index < len(questions):
-            t = 5
+            t = 45
             if not CHAT_STATE[0]:
                 conn1.sendall(questions[index].encode())
             if not CHAT_STATE[1]:
@@ -86,3 +86,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
             time.sleep(5)
         conn1.sendall("end".encode())
+        conn2.sendall("end".encode())
