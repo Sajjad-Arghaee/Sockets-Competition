@@ -1,6 +1,6 @@
 import threading
 import server as server_socket
-from initialize import *
+from __init__ import *
 
 
 def start_competition(server):
