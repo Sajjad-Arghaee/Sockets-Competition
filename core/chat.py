@@ -7,17 +7,19 @@ END_CHAT = False
 CHAT_STARTED = False
 
 
-def receive_handler(socket_chat: socket):
-    global CHAT_STARTED
-    socket_chat.listen()
-    conn, addr = socket_chat.accept()
-    print(f'client {addr} wants to chat')
-    CHAT_STARTED = True
+def receive_handler(chat_socket):
+    pass
+    # with chat_socket:
+    #     global CHAT_STARTED
+    #     chat_socket.listen()
+    #     conn, addr = chat_socket.accept()
+    #     print(f'client {addr} wants to chat')
+    #     CHAT_STARTED = True
 
 
 def send_handler(port):
     global END_CHAT
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sender_socket,\
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sender_socket, \
             socket.socket(socket.AF_INET, socket.SOCK_STREAM) as host_socket:
         sender_socket.bind((HOST, port))
         receiver_port = int(input('write down receiver port number >> '))

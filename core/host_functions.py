@@ -5,9 +5,9 @@ from __init_host__ import *
 
 def start_competition(server):
     server.bind((HOST, PORT))
-    server.listen()
     new_connections = {}
     for _ in range(CLIENTS_NUMBER):
+        server.listen()
         new_conn, addr = server.accept()
         new_connections.update({new_conn: addr})
         print(f"First client connected with : {addr}")

@@ -1,9 +1,11 @@
+import threading
 import time
 from pynput import keyboard
 from chat import *
 from client_functions import *
 
 START_CHAT = False
+ANSWERED = False
 
 
 def timer(num):
@@ -30,7 +32,7 @@ def finish():
 
 def key_handler(client, key, port):
     global START_CHAT
-    with keyboard.GlobalHotKeys({key: on_activate(key), '<ctrl>+c': finish}) as listener:
+    with keyboard.GlobalHotKeys({key: on_activate, '<ctrl>+c': finish}) as listener:
         listener.join()
         if START_CHAT:
             client.close()
@@ -57,8 +59,9 @@ def finish_competition(message):
 
 
 def participate():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client, \
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM) as chat_socket:
+    global ANSWERED
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+        chat_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         key, port = connect_to_server(client, chat_socket)
         receive_handler_thread = threading.Thread(target=receive_handler, args=(chat_socket,))
         receive_handler_thread.start()
@@ -67,13 +70,19 @@ def participate():
 
         message = ''
         while message != 'end':
+            ANSWERED = False
             message = client.recv(1024).decode()
-            finish_competition(message)
+            if finish_competition(message):
+                break
             timer_thread_1 = threading.Thread(target=timer, args=(45,))
             timer_thread_1.start()
             answer = get_answer(message)
+            ANSWERED = True
             message = client.recv(1024).decode()
             send_answer(message, answer, client)
+            timer_thread_2 = threading.Thread(target=timer, args=(5,))
+            timer_thread_2.start()
+            timer_thread_2.join()
         print('press ctrl+c to exit')
 
 

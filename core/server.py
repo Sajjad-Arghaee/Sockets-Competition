@@ -23,7 +23,7 @@ def print_timer(t):
 def hold_competition():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         connections = start_competition(server)
-        with connections.keys():
+        with list(connections.keys())[0], list(connections.keys())[1]:
             index = 0
             while index < len(QUESTIONS):
                 t = 45
