@@ -1,6 +1,6 @@
 import socket
 import time
-from competiton_functions import *
+from host_functions import *
 
 
 def chat_listener(s1: socket, msg):
