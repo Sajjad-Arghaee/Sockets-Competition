@@ -3,6 +3,7 @@ import time
 from pynput import keyboard
 from chat import *
 from client_functions import *
+import __init_client__
 
 START_CHAT = False
 ANSWERED = False
@@ -40,12 +41,17 @@ def key_handler(client, key, port):
         quit()
 
 
-def connect_to_server(client, chat_socket):
-    chat_socket.bind((HOST, 23001))
-    print(f'your chat port is ', chat_socket.getsockname()[1])
-    port = int(input('write your port number >> '))
+def connect_to_server(client):
+    f = open('sample.json', encoding="utf8")
+    data = json.load(f)
+    port = data[0]
+    f.close()
+    json_object = json.dumps(data[1:])
+    with open("sample.json", "w") as outfile:
+        outfile.write(json_object)
+    print(port)
     client.bind((HOST, port))
-    client.connect((HOST, PORT))
+    client.connect((HOST, __init_client__.PORT))
     key = client.recv(1024).decode()
     print(f'You can enter {key} key, to enter chat room')
     return key, port
@@ -61,10 +67,7 @@ def finish_competition(message):
 def participate():
     global ANSWERED
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-        chat_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        key, port = connect_to_server(client, chat_socket)
-        receive_handler_thread = threading.Thread(target=receive_handler, args=(chat_socket,))
-        receive_handler_thread.start()
+        key, port = connect_to_server(client)
         key_handler_thread = threading.Thread(target=key_handler, args=(client, key, port,))
         key_handler_thread.start()
 
@@ -74,7 +77,7 @@ def participate():
             message = client.recv(1024).decode()
             if finish_competition(message):
                 break
-            timer_thread_1 = threading.Thread(target=timer, args=(45,))
+            timer_thread_1 = threading.Thread(target=timer, args=(10,))
             timer_thread_1.start()
             answer = get_answer(message)
             ANSWERED = True

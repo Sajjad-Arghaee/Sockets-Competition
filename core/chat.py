@@ -1,20 +1,28 @@
+import json
 import socket
 from pytimedinput import timedInput
 
 HOST = '127.0.0.1'
 PORT = 54122
+f = open('users.json', encoding="utf8")
+data = json.load(f)
+for item in data:
+    if item['type'] == 'host':
+        PORT = item['port']
+
+f.close()
+
 END_CHAT = False
 CHAT_STARTED = False
 
 
 def receive_handler(chat_socket):
-    pass
-    # with chat_socket:
-    #     global CHAT_STARTED
-    #     chat_socket.listen()
-    #     conn, addr = chat_socket.accept()
-    #     print(f'client {addr} wants to chat')
-    #     CHAT_STARTED = True
+    with chat_socket:
+        global CHAT_STARTED
+        chat_socket.listen()
+        conn, addr = chat_socket.accept()
+        print(f'client {addr} wants to chat')
+        CHAT_STARTED = True
 
 
 def send_handler(port):

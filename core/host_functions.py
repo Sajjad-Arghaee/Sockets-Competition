@@ -21,27 +21,24 @@ def show_scoreboard(connections):
         scoreboard += f'player {i} : {SCORES[i]} '
     print(scoreboard)
     for i in range(CLIENTS_NUMBER):
-        if not CHAT_STATE[i]:
-            list(connections.keys())[i].sendall(scoreboard.encode())
+        list(connections.keys())[i].sendall(scoreboard.encode())
 
 
 def send_question(connections, index):
     for i in range(CLIENTS_NUMBER):
-        if not CHAT_STATE[i]:
-            list(connections.keys())[i].sendall(QUESTIONS[index].encode())
+        list(connections.keys())[i].sendall(QUESTIONS[index].encode())
 
 
 def check_answers(connections, index):
     for i in range(CLIENTS_NUMBER):
         conn = list(connections.keys())[i]
         conn.sendall('send'.encode())
-        if not CHAT_STATE[i]:
-            answer = conn.recv(1024).decode()
-            if 'chat' in answer:
-                chat_thread = threading.Thread(target=server_socket.chat_listener, args=(conn, connections.get(conn)))
-                chat_thread.start()
-            elif answer == ANSWERS[index]:
-                SCORES[i] += 1
+        answer = conn.recv(1024).decode()
+        if 'chat' in answer:
+            chat_thread = threading.Thread(target=server_socket.chat_listener, args=(conn, connections.get(conn)))
+            chat_thread.start()
+        elif answer != 'no answer' and (int(answer) == int(ANSWERS[index])):
+            SCORES[i] += 1
 
 
 def end_competition(connections):

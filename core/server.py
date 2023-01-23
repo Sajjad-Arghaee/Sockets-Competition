@@ -5,7 +5,6 @@ from host_functions import *
 
 def chat_listener(s1: socket, msg):
     print(msg)
-    CHAT_STATE[0] = 1
     while msg != 'end_chat':
         msg = s1.recv(1024).decode()
         print(msg)
@@ -26,7 +25,7 @@ def hold_competition():
         with list(connections.keys())[0], list(connections.keys())[1]:
             index = 0
             while index < len(QUESTIONS):
-                t = 45
+                t = 10
                 send_question(connections, index)
                 print_timer(t)
                 check_answers(connections, index)

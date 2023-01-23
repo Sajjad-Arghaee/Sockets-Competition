@@ -1,3 +1,5 @@
+import sys
+
 from client import START_CHAT
 from pytimedinput import timedInput
 from __init_client__ import *
@@ -11,10 +13,10 @@ def finish_competition(message):
 
 
 def get_answer(message):
-    print(message)
+    sys.stdout.buffer.write(message.encode("utf-8"))
     if START_CHAT or CHAT_STARTED:
         quit()
-    user_text, timed_out = timedInput("type your answer >> ", timeout=45)
+    user_text, timed_out = timedInput("type your answer >> ", timeout=10)
     if timed_out:
         answer = 'no answer'
     else:
