@@ -25,7 +25,7 @@ def hold_competition():
         with list(connections.keys())[0], list(connections.keys())[1]:
             index = 0
             while index < len(QUESTIONS):
-                t = 10
+                t = 45
                 send_question(connections, index)
                 print_timer(t)
                 check_answers(connections, index)

@@ -77,7 +77,7 @@ def participate():
             message = client.recv(1024).decode()
             if finish_competition(message):
                 break
-            timer_thread_1 = threading.Thread(target=timer, args=(10,))
+            timer_thread_1 = threading.Thread(target=timer, args=(45,))
             timer_thread_1.start()
             answer = get_answer(message)
             ANSWERED = True

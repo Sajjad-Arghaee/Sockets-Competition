@@ -10,7 +10,7 @@ def start_competition(server):
         server.listen()
         new_conn, addr = server.accept()
         new_connections.update({new_conn: addr})
-        print(f"First client connected with : {addr}")
+        print(f"client connected with : {addr}")
         new_conn.sendall(CHAT_KEYS.pop().encode())
     return new_connections
 
@@ -37,7 +37,7 @@ def check_answers(connections, index):
         if 'chat' in answer:
             chat_thread = threading.Thread(target=server_socket.chat_listener, args=(conn, connections.get(conn)))
             chat_thread.start()
-        elif answer != 'no answer' and (int(answer) == int(ANSWERS[index])):
+        elif answer != 'no answer' and (str(answer) == str(ANSWERS[index])):
             SCORES[i] += 1
 
 
